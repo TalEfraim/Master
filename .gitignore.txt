@@ -1,6 +1,0 @@
-.idea/
-Backup/
-build/
-dist/
-Main.spec/
-ui to py.txt/
