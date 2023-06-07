@@ -23,11 +23,17 @@
       <height>311</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <underline>false</underline>
+      <strikeout>false</strikeout>
+     </font>
+    </property>
     <property name="autoFillBackground">
      <bool>false</bool>
     </property>
     <property name="styleSheet">
-     <string notr="true"/>
+     <string notr="true">background-color: rgb(225,220,220);</string>
     </property>
    </widget>
    <widget class="QPushButton" name="TurnCameraButton">
@@ -51,6 +57,9 @@
       <width>241</width>
       <height>221</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225,220,220);</string>
     </property>
    </widget>
    <widget class="QLabel" name="TargetImagesLabel">
@@ -112,6 +121,9 @@
       <weight>75</weight>
       <bold>true</bold>
      </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225,220,220);</string>
     </property>
     <property name="text">
      <string>Create target report</string>
