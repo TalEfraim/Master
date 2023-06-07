@@ -73,7 +73,6 @@ class Ui_MainWindow(object):
         self.actionLoad_target_images.setObjectName("actionLoad_target_images")
         self.menuMenu.addAction(self.actionLoad_target_images)
         self.menubar.addAction(self.menuMenu.menuAction())
-
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
