@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>869</width>
     <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Suspect finder</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QWidget" name="CameraWidget" native="true">
@@ -65,9 +65,9 @@
    <widget class="QLabel" name="TargetImagesLabel">
     <property name="geometry">
      <rect>
-      <x>570</x>
+      <x>540</x>
       <y>15</y>
-      <width>191</width>
+      <width>241</width>
       <height>31</height>
      </rect>
     </property>
@@ -80,7 +80,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Target images database</string>
+     <string>Target images database:</string>
     </property>
    </widget>
    <widget class="QSlider" name="horizontalSlider">
@@ -109,9 +109,9 @@
    <widget class="QPushButton" name="CreateReportButton">
     <property name="geometry">
      <rect>
-      <x>590</x>
+      <x>580</x>
       <y>510</y>
-      <width>181</width>
+      <width>211</width>
       <height>41</height>
      </rect>
     </property>
@@ -132,7 +132,7 @@
    <widget class="QLabel" name="ExportPathLabel">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>150</x>
       <y>472</y>
       <width>641</width>
       <height>31</height>
@@ -150,7 +150,7 @@
      <rect>
       <x>20</x>
       <y>460</y>
-      <width>101</width>
+      <width>121</width>
       <height>51</height>
      </rect>
     </property>
@@ -169,8 +169,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
-     <height>21</height>
+     <width>869</width>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMenu">
@@ -178,6 +178,8 @@
      <string>Menu</string>
     </property>
     <addaction name="actionLoad_target_images"/>
+    <addaction name="separator"/>
+    <addaction name="actionPolicy"/>
    </widget>
    <addaction name="menuMenu"/>
   </widget>
@@ -185,6 +187,11 @@
   <action name="actionLoad_target_images">
    <property name="text">
     <string>Load target images</string>
+   </property>
+  </action>
+  <action name="actionPolicy">
+   <property name="text">
+    <string>Policy</string>
    </property>
   </action>
  </widget>

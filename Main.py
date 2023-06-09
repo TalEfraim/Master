@@ -12,7 +12,7 @@ class UI(Qtw.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.Available_cameras = QCameraInfo.availableCameras()
-        if not self.available_cameras:
+        if not self.Available_cameras:
             self.Available_cameras = 0
             WarningMsg = "No available cameras."
             Logger_module.Add_Trace_To_Logfile(WarningMsg, "WARNING")
