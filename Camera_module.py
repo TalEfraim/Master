@@ -1,21 +1,30 @@
-# This module is activating the web-camera. Escape pressing will shut it down.
 import cv2
+import Logger_module
 
-
-class CAMERA:
-    def __init__(self):
-        self.Video_window = cv2.namedWindow("preview")
-        self.Video_capture = cv2.VideoCapture(0)
-        if self.Video_capture.isOpened():
-            self.rval, self.frame = self.Video_capture.read()
-        else:
-            self.rval = False
-
-    def Run(self):
-        while self.rval:
-            cv2.imshow("preview", self.frame)
-            self.rval, self.frame = self.Video_capture.read()
-            key = cv2.waitKey(20)
-            if key == 27:  # exit on ESC
+def control_camera(on_off):
+    if on_off == "on":
+        cap = cv2.VideoCapture(0)
+        if not cap.isOpened():
+            ErrorMsg = 'Failed to open camera.'
+            Logger_module.Add_Trace_To_Logfile(message=ErrorMsg, log_mode='ERROR')
+            return
+        # Read frames from the camera while the camera is on
+        while cap.isOpened():
+            ret, frame = cap.read()
+            if not ret:
                 break
+            # Display the frame
+            cv2.imshow("Camera", frame)
+            # Check if the camera should be turned off
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+        # Release the camera and close the window
+        cap.release()
+        cv2.destroyAllWindows()
+    elif on_off == "off":
+        # Close any open camera windows
+        cv2.destroyAllWindows()
+    else:
+        print("Invalid on_off argument. Please specify either 'on' or 'off'.")
+
 
