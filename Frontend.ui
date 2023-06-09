@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>925</width>
-    <height>652</height>
+    <width>898</width>
+    <height>660</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Suspect detector</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QPushButton" name="TurnCameraButton">
@@ -166,7 +166,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>925</width>
+     <width>898</width>
      <height>26</height>
     </rect>
    </property>
@@ -175,7 +175,6 @@
      <string>Menu</string>
     </property>
     <addaction name="actionLoad_target_images"/>
-    <addaction name="separator"/>
     <addaction name="actionPolicy"/>
    </widget>
    <addaction name="menuMenu"/>
