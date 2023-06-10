@@ -4,7 +4,6 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtMultimedia import *
 from PyQt5.QtWidgets import QLabel
-
 import Camera_module
 import Logger_module
 from FrontEnd_module import Ui_MainWindow
@@ -58,7 +57,6 @@ class UI(Qtw.QMainWindow):
                 Logger_module.Add_Trace_To_Logfile(message=Msg, log_mode='INFO')
                 Camera_module.Turn_camera_off(self)
                 self.CancelFeed()
-
 
         except Exception as ErrorMsg:
             Logger_module.Add_Trace_To_Logfile(message=ErrorMsg, log_mode=ErrorMsg)
