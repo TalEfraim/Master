@@ -1,9 +1,13 @@
 import sys
-from FrontEnd_module import Ui_MainWindow
-import Logger_module, Camera_module
-from PyQt5.QtMultimedia import *
-from PyQt5.QtCore import pyqtSlot
 from PyQt5 import QtWidgets as Qtw
+from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtMultimedia import *
+from PyQt5.QtWidgets import QLabel
+
+import Camera_module
+import Logger_module
+from FrontEnd_module import Ui_MainWindow
 
 
 class UI(Qtw.QMainWindow):
@@ -21,6 +25,16 @@ class UI(Qtw.QMainWindow):
         self.ui.TurnCameraButton.clicked.connect(self.Camera_button_pressed)
         self.ui.SetExportPathButton.clicked.connect(self.Set_export_path)
         self.ui.CreateReportButton.clicked.connect(self.Create_report)
+        self.Worker1 = Camera_module.Worker1()
+        self.Worker1.ImageUpdate.connect(self.ImageUpdateSlot)
+
+    # will be called when camera button pressed and camera off.
+    def ImageUpdateSlot(self, Image):
+        self.ui.MainVideo.setPixmap(QPixmap.fromImage(Image))
+
+    # will be called when camera button pressed and camera already on.
+    def CancelFeed(self):
+        self.Worker1.stop()
 
     def Set_export_path(self):
         return
@@ -29,20 +43,22 @@ class UI(Qtw.QMainWindow):
     def Create_report(self):
         return
 
-    @pyqtSlot()
+    # @pyqtSlot()
     def Camera_button_pressed(self):
         try:
             if self.Available_cameras != 0 and not self.Video_capture:
                 self.Video_capture = True
                 Msg = "Camera turned on"
                 Logger_module.Add_Trace_To_Logfile(message=Msg, log_mode='INFO')
-                Camera_module.Turn_camera_on()
+                Camera_module.Turn_camera_on(self)
 
             elif self.Available_cameras != 0 and self.Video_capture:
                 self.Video_capture = False
                 Msg = "Camera turned off"
                 Logger_module.Add_Trace_To_Logfile(message=Msg, log_mode='INFO')
-                Camera_module.Turn_camera_off()
+                Camera_module.Turn_camera_off(self)
+                self.CancelFeed()
+
 
         except Exception as ErrorMsg:
             Logger_module.Add_Trace_To_Logfile(message=ErrorMsg, log_mode=ErrorMsg)
