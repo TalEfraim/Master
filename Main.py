@@ -1,11 +1,14 @@
+import os
 import sys
 from PyQt5 import QtWidgets as Qtw
+from natsort import natsorted, ns, index_natsorted, order_by_index
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import *
 from PyQt5.QtMultimedia import *
 from PyQt5.QtWidgets import QLabel, QFileDialog
 import Camera_module
 import Logger_module
+import Database_module as DATABASE
 from FrontEnd_module import Ui_MainWindow
 
 # ==================================================================================================================== #
@@ -36,6 +39,7 @@ class UI(Qtw.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.SoftwareVersion = '1.0.0'
+        self.ui.actionversion_number.setText(self.SoftwareVersion)
         self.Available_cameras = QCameraInfo.availableCameras()
         if not self.Available_cameras:
             self.Available_cameras = 0
@@ -43,6 +47,8 @@ class UI(Qtw.QMainWindow):
             Logger_module.Add_Trace_To_Logfile(WarningMsg, "WARNING")
         self.Video_capture = False
         self.output_directory_path = None
+        self.ui.CurrentImage_slider.valueChanged.connect(self.Value_changed_ImageSlider)
+        self.ui.CurrentImage_radiobox.valueChanged.connect(self.Value_changed_ImageRadiobox)
         self.ui.TurnCameraButton.clicked.connect(self.Camera_button_pressed)
         self.ui.TurnCameraButton.clicked.connect(self.Camera_button_pressed)
         self.ui.SetExportPathButton.clicked.connect(self.Set_export_path)
@@ -52,6 +58,38 @@ class UI(Qtw.QMainWindow):
 
     def ImageUpdateSlot(self, Image):
         self.ui.MainVideo.setPixmap(QPixmap.fromImage(Image))
+
+
+    def Load_Dataset(self):
+        # Input_folder = self.output_directory_path
+        # FilesList = [f for f in os.listdir(Input_folder) if f.endswith('.jpg')]
+        # FilesList = natsorted(FilesList, alg=ns.PATH | ns.IGNORECASE)
+        return
+
+
+    def Value_changed_ImageSlider(self):
+        try:
+            plot_box = self.ui.CurrentImage_radiobox.value()
+            plot_slider = self.ui.CurrentImage_slider.value()
+            if plot_box != plot_slider:
+                self.ui.CurrentImage_radiobox.setValue(plot_slider)
+        except Exception as ErrorMsg:
+            Logger_module.Add_Trace_To_Logfile(message=ErrorMsg, log_mode='ERROR')
+            return
+
+
+    def Value_changed_ImageRadiobox(self):
+        try:
+            plot_box = self.ui.CurrentImage_radiobox.value()
+            plot_slider = self.ui.CurrentImage_slider.value()
+            if plot_box != plot_slider:
+                self.ui.CurrentImage_slider.setValue(plot_box)
+                # self.RefreshPage()
+                # self.UpdateBox()
+        except Exception as ErrorMsg:
+            Logger_module.Add_Trace_To_Logfile(message=ErrorMsg, log_mode='ERROR')
+            return
+
 
     def Set_export_path(self):
         try:

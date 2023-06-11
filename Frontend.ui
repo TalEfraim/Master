@@ -30,9 +30,9 @@
    <widget class="QLabel" name="TargetImagesLabel">
     <property name="geometry">
      <rect>
-      <x>570</x>
+      <x>560</x>
       <y>15</y>
-      <width>191</width>
+      <width>201</width>
       <height>31</height>
      </rect>
     </property>
@@ -48,7 +48,7 @@
      <string>Target images database:</string>
     </property>
    </widget>
-   <widget class="QSlider" name="horizontalSlider">
+   <widget class="QSlider" name="CurrentImage_slider">
     <property name="geometry">
      <rect>
       <x>540</x>
@@ -61,7 +61,7 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QSpinBox" name="spinBox">
+   <widget class="QSpinBox" name="CurrentImage_radiobox">
     <property name="geometry">
      <rect>
       <x>740</x>
@@ -174,14 +174,25 @@
     <property name="title">
      <string>Menu</string>
     </property>
+    <widget class="QMenu" name="menuChoose_camera">
+     <property name="title">
+      <string>Choose camera</string>
+     </property>
+    </widget>
     <addaction name="actionLoad_target_images"/>
-    <addaction name="actionChoose_camera"/>
+    <addaction name="menuChoose_camera"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="title">
      <string>About</string>
     </property>
-    <addaction name="actionVersion"/>
+    <widget class="QMenu" name="menuVersion">
+     <property name="title">
+      <string>Version</string>
+     </property>
+     <addaction name="actionversion_number"/>
+    </widget>
+    <addaction name="menuVersion"/>
     <addaction name="actionSofware_info"/>
     <addaction name="actionPolicy_2"/>
    </widget>
@@ -205,16 +216,6 @@
     <string>Policy</string>
    </property>
   </action>
-  <action name="actionChoose_camera">
-   <property name="text">
-    <string>Choose camera</string>
-   </property>
-  </action>
-  <action name="actionVersion">
-   <property name="text">
-    <string>Version</string>
-   </property>
-  </action>
   <action name="actionPolicy_2">
    <property name="text">
     <string>Policy</string>
@@ -223,6 +224,16 @@
   <action name="actionSofware_info">
    <property name="text">
     <string>Sofware info</string>
+   </property>
+  </action>
+  <action name="actionversion_number">
+   <property name="text">
+    <string>Version_number</string>
+   </property>
+  </action>
+  <action name="actionf">
+   <property name="text">
+    <string>f</string>
    </property>
   </action>
  </widget>
