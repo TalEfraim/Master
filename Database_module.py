@@ -1,4 +1,7 @@
 
+
+
+
 # Check that a file name has a valid image extension for QPixmap
 def filename_has_image_extension(filename):
     valid_img_extensions = \

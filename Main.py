@@ -5,7 +5,7 @@ from natsort import natsorted, ns, index_natsorted, order_by_index
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import *
 from PyQt5.QtMultimedia import *
-from PyQt5.QtWidgets import QLabel, QFileDialog
+from PyQt5.QtWidgets import QLabel, QFileDialog, QAction
 import Camera_module
 import Logger_module
 import Database_module as DATABASE
@@ -36,6 +36,8 @@ from FrontEnd_module import Ui_MainWindow
 class UI(Qtw.QMainWindow):
     def __init__(self):
         super(UI, self).__init__()
+        self.selected_camera_index = 0
+        self.ImagesList = None
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.SoftwareVersion = '1.0.0'
@@ -46,28 +48,38 @@ class UI(Qtw.QMainWindow):
             WarningMsg = "No available cameras."
             Logger_module.Add_Trace_To_Logfile(WarningMsg, "WARNING")
         elif len(self.Available_cameras) > 1:
+            for camera in self.Available_cameras:
+                action = QAction(camera.description(), self.ui.menuChoose_camera)
+                action.triggered.connect(lambda _, cam=camera: self.select_camera(cam))
+                self.ui.menuChoose_camera.addAction(action)
             # TODO: write a method to set the available devices to the menu bar.
-            return
+            # return
+            print(self.Available_cameras)
         self.Video_capture = False
         self.output_directory_path = None
+        self.ui.actionLoad_target_images.triggered.connect(self.Load_Dataset)
         self.ui.CurrentImage_slider.valueChanged.connect(self.Value_changed_ImageSlider)
         self.ui.CurrentImage_radiobox.valueChanged.connect(self.Value_changed_ImageRadiobox)
         self.ui.TurnCameraButton.clicked.connect(self.Camera_button_pressed)
         self.ui.TurnCameraButton.clicked.connect(self.Camera_button_pressed)
         self.ui.SetExportPathButton.clicked.connect(self.Set_export_path)
         self.ui.CreateReportButton.clicked.connect(self.Create_report)
-        self.Worker1 = Camera_module.Worker1()
+        self.Worker1 = Camera_module.Worker1(WhichCameraIndex=self.selected_camera_index)
         self.Worker1.ImageUpdate.connect(self.ImageUpdateSlot)
+
+    def select_camera(self, camera):
+        selected_index = QCameraInfo.availableCameras().index(camera)
+        self.selected_camera_index = selected_index
+        print(self.selected_camera_index)
 
     def ImageUpdateSlot(self, Image):
         self.ui.MainVideo.setPixmap(QPixmap.fromImage(Image))
 
 
     def Load_Dataset(self):
-        # Input_folder = self.output_directory_path
-        # FilesList = [f for f in os.listdir(Input_folder) if f.endswith('.jpg')]
-        # FilesList = natsorted(FilesList, alg=ns.PATH | ns.IGNORECASE)
-        return
+        Input_folder = QFileDialog.getExistingDirectory(self, "Please choose images location directory.")
+        self.ImagesList = [f for f in os.listdir(Input_folder) if f.endswith('.jpg')]
+        # TODO: update images on label.
 
 
     def Value_changed_ImageSlider(self):
@@ -120,7 +132,7 @@ class UI(Qtw.QMainWindow):
                 self.Video_capture = True
                 Msg = "Camera turned on"
                 Logger_module.Add_Trace_To_Logfile(message=Msg, log_mode='INFO')
-                Camera_module.Turn_camera_on(self)
+                Camera_module.Turn_camera_on(self, WhichCameraIndex=self.selected_camera_index)
 
             elif self.Available_cameras != 0 and self.Video_capture:
                 self.Video_capture = False

@@ -3,10 +3,17 @@ import cv2
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import Logger_module
+import Main
 
 
 class Worker1(QThread):
     ImageUpdate = pyqtSignal(QImage)
+
+    def __init__(self, WhichCameraIndex):
+        super().__init__()
+        self.camera_index = WhichCameraIndex
+        self.threadActive = False
+
     def run(self):
         try:
             self.ThreadActive = True
@@ -26,10 +33,10 @@ class Worker1(QThread):
 
     def stop(self):
         self.ThreadActive = False
-        # self.quit()
 
 
-def Turn_camera_on(self):
+def Turn_camera_on(self, WhichCameraIndex):
+    self.Worker1 = Worker1(WhichCameraIndex=WhichCameraIndex)
     self.Worker1.start()
 
 
