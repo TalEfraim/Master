@@ -45,6 +45,9 @@ class UI(Qtw.QMainWindow):
             self.Available_cameras = 0
             WarningMsg = "No available cameras."
             Logger_module.Add_Trace_To_Logfile(WarningMsg, "WARNING")
+        elif len(self.Available_cameras) > 1:
+            # TODO: write a method to set the available devices to the menu bar.
+            return
         self.Video_capture = False
         self.output_directory_path = None
         self.ui.CurrentImage_slider.valueChanged.connect(self.Value_changed_ImageSlider)
