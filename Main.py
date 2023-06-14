@@ -19,6 +19,7 @@ import cv2
 import sys
 import time
 
+
 # ==================================================================================================================== #
 # TODO: Software front-end / back-end tasks:
 
@@ -60,7 +61,7 @@ class CamThread(QThread):
                 if ret:
                     rgb = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2RGB)
 
-                    #any other image processing here
+                    # any other image processing here
 
                     convert = QImage(rgb.data, rgb.shape[1], rgb.shape[0], QImage.Format_RGB888)
                     p = convert.scaled(640, 480, Qt.KeepAspectRatio)
@@ -77,6 +78,7 @@ class CamThread(QThread):
 class UI(Qtw.QMainWindow):
     def __init__(self):
         super(UI, self).__init__()
+        self.thr = None
         self.mutex = QMutex()
         self.condition = QWaitCondition()
         self.ThreadExist = False
@@ -99,36 +101,37 @@ class UI(Qtw.QMainWindow):
         self.Video_capture = False
         self.output_directory_path = None
         self.ui.actionLoad_target_images.triggered.connect(self.Load_Dataset)
+        self.ui.actionPolicy_2.triggered.connect(self.Present_policy)
         self.ui.CurrentImage_slider.valueChanged.connect(self.Value_changed_ImageSlider)
         self.ui.CurrentImage_radiobox.valueChanged.connect(self.Value_changed_ImageRadiobox)
         self.ui.CameraOnBtn.clicked.connect(self.CameraON)
-        self.ui.CameraOffBtn.clicked.connect(self.CamerOFF)
+        self.ui.CameraOffBtn.clicked.connect(self.CameraOFF)
         self.ui.SetExportPathButton.clicked.connect(self.Set_export_path)
         self.ui.CreateReportButton.clicked.connect(self.Create_report)
 
-
-    def InitCamera(self):
+    def CameraON(self): #why the hell it crashing in second time ?!!
         self.mutex.lock()
         self.thr = CamThread(mutex=self.mutex, condition=self.condition, camera_idx=self.selected_camera_index)
         self.thr.changemap.connect(self.ImageUpdateSlot)
         self.thr.start()
         self.ThreadExist = True
 
-    def StopCamera(self):
-        CamThread.stop(self.thr)
-        self.ThreadExist = False
-
+    def CameraOFF(self):
+        if self.ThreadExist:
+            self.thr.stop()
+            self.ThreadExist = False
+            del self.thr
 
     def select_camera(self, camera):
         selected_index = QCameraInfo.availableCameras().index(camera)
         self.selected_camera_index = selected_index
 
-
     @pyqtSlot('QImage')
     def ImageUpdateSlot(self, Image):
         self.mutex.lock()
         try:
-            self.ui.MainVideo.setPixmap(QPixmap.fromImage(Image))  # I think this line causing the crash after video stop.
+            self.ui.MainVideo.setPixmap(
+                QPixmap.fromImage(Image))  # I think this line causing the crash after video stop.
         finally:
             self.mutex.unlock()
             self.condition.wakeAll()
@@ -140,11 +143,10 @@ class UI(Qtw.QMainWindow):
         Input_folder = QFileDialog.getExistingDirectory(self, "Please choose images location directory.")
         self.ImagesList = [f for f in os.listdir(Input_folder) if f.endswith('.jpg')]
         for image in self.ImagesList:
-            pixmap = QPixmap(Input_folder+image)
+            pixmap = QPixmap(Input_folder + image)
             self.ui.DatasetImages.setPixmap(pixmap)
             self.ui.DatasetImages.setScaledContents(True)
         # TODO: update images on label.
-
 
     def Value_changed_ImageSlider(self):
         try:
@@ -155,7 +157,6 @@ class UI(Qtw.QMainWindow):
         except Exception as ErrorMsg:
             Logger_module.Add_Trace_To_Logfile(message=ErrorMsg, log_mode='ERROR')
             return
-
 
     def Value_changed_ImageRadiobox(self):
         try:
@@ -169,18 +170,29 @@ class UI(Qtw.QMainWindow):
             Logger_module.Add_Trace_To_Logfile(message=ErrorMsg, log_mode='ERROR')
             return
 
+    def Present_policy(self):
+        Policy_file = 'Policy.txt'
+        file_contents = ''
+        with open(Policy_file, 'r') as file:
+            file_contents = file.read()
+        popup = QMessageBox()
+        popup.setWindowTitle("Policy")
+        text = file_contents
+        popup.setText(text)
+        popup.exec_()
 
+        return
     def Set_export_path(self):
         try:
             self.output_directory_path = QFileDialog.getExistingDirectory(self,
-                                                                        "Please choose output location or create one.")
+                                                                          "Please choose output location or create one.")
             if self.output_directory_path:
                 self.ui.ExportPathLabel.setText(str(self.output_directory_path))
                 Msg = 'Output directory selected. [' + str(self.output_directory_path) + ']'
                 Logger_module.Add_Trace_To_Logfile(message=Msg, log_mode='INFO')
             else:
-                ErrorMsg = "The selected path isn't valid or unreachable. please choose a proper directory."
-                Logger_module.Add_Trace_To_Logfile(message=ErrorMsg, log_mode='ERROR')
+                WarningMsg = "The selected path isn't valid or unreachable. please choose a proper directory."
+                Logger_module.Add_Trace_To_Logfile(message=WarningMsg, log_mode='WARNING')
                 return
         except:
             ErrorMsg = 'Exception or fatal error in Set_export_path()'
@@ -189,51 +201,9 @@ class UI(Qtw.QMainWindow):
     def Create_report(self):
         return
 
-    @pyqtSlot()
-    def CameraON(self):
-        try:
-            if self.Available_cameras != 0:
-                Msg = "Camera turned on"
-                Logger_module.Add_Trace_To_Logfile(message=Msg, log_mode='INFO')
-                self.InitCamera()
-        except Exception as ErrorMsg:
-            Logger_module.Add_Trace_To_Logfile(message=ErrorMsg, log_mode=ErrorMsg)
-            return
-
-    @pyqtSlot()
-    def CamerOFF(self):
-        if self.Available_cameras != 0:
-            Msg = "Camera turned off"
-            Logger_module.Add_Trace_To_Logfile(message=Msg, log_mode='INFO')
-            self.StopCamera()
-            del self.thr
-            gc.collect()
-    @pyqtSlot()
-    def Camera_button_pressed(self):
-        try:
-            if self.Available_cameras != 0 and not self.Video_capture:
-                self.Video_capture = True
-                Msg = "Camera turned on"
-                Logger_module.Add_Trace_To_Logfile(message=Msg, log_mode='INFO')
-                self.InitCamera()
-
-            elif self.Available_cameras != 0 and self.Video_capture:
-                self.Video_capture = False
-                Msg = "Camera turned off"
-                Logger_module.Add_Trace_To_Logfile(message=Msg, log_mode='INFO')
-                # self.thr.changemap.disconnect(self.ImageUpdateSlot)
-                self.StopCamera()
-
-        except Exception as ErrorMsg:
-            Logger_module.Add_Trace_To_Logfile(message=ErrorMsg, log_mode=ErrorMsg)
-            return
-
 
 if __name__ == '__main__':
     app = Qtw.QApplication(sys.argv)
     window = UI()  # Create an instance of our class.
     window.show()
     app.exec_()  # Start the application.
-
-
-
