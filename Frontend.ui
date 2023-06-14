@@ -13,18 +13,24 @@
   <property name="windowTitle">
    <string>Suspect detector</string>
   </property>
+  <property name="windowOpacity">
+   <double>1.000000000000000</double>
+  </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="TurnCameraButton">
+   <widget class="QPushButton" name="CameraOnBtn">
     <property name="geometry">
      <rect>
-      <x>130</x>
-      <y>340</y>
+      <x>30</x>
+      <y>370</y>
       <width>131</width>
       <height>31</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(0,255,0);</string>
+    </property>
     <property name="text">
-     <string>Camera ON/OFF</string>
+     <string>Camera ON</string>
     </property>
    </widget>
    <widget class="QLabel" name="TargetImagesLabel">
@@ -75,7 +81,7 @@
     <property name="geometry">
      <rect>
       <x>580</x>
-      <y>510</y>
+      <y>550</y>
       <width>221</width>
       <height>41</height>
      </rect>
@@ -98,7 +104,7 @@
     <property name="geometry">
      <rect>
       <x>160</x>
-      <y>472</y>
+      <y>510</y>
       <width>641</width>
       <height>31</height>
      </rect>
@@ -114,7 +120,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>460</y>
+      <y>500</y>
       <width>131</width>
       <height>51</height>
      </rect>
@@ -133,8 +139,8 @@
      <rect>
       <x>30</x>
       <y>20</y>
-      <width>351</width>
-      <height>311</height>
+      <width>391</width>
+      <height>331</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -160,6 +166,22 @@
      <string/>
     </property>
    </widget>
+   <widget class="QPushButton" name="CameraOffBtn">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>370</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255 ,0 ,0)</string>
+    </property>
+    <property name="text">
+     <string>Camera OFF</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -167,7 +189,7 @@
      <x>0</x>
      <y>0</y>
      <width>898</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMenu">

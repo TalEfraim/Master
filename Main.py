@@ -1,3 +1,4 @@
+import gc
 import os
 import sys
 import cv2
@@ -26,7 +27,6 @@ import time
 # TODO: 3. Write general function to handle "about", "policy", etc.. events.
 # TODO: 4. Turn black the  live camera screen when camera state is OFF.
 # TODO: 5. Handle software crash in case of camera ON + path choose, any other event.
-# TODO: 6. Allow camera switching.
 # TODO: 7. Write a short user manual.
 
 # ==================================================================================================================== #
@@ -43,14 +43,15 @@ import time
 class CamThread(QThread):
     changemap = pyqtSignal('QImage')
 
-    def __init__(self, mutex, condition):
+    def __init__(self, mutex, condition, camera_idx):
         super().__init__()
         self.mutex = mutex
         self.condition = condition
         self.running = True
+        self.CamIDX = camera_idx
 
     def run(self):
-        cap = cv2.VideoCapture(0)
+        cap = cv2.VideoCapture(self.CamIDX)
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
         while self.running:
@@ -78,6 +79,7 @@ class UI(Qtw.QMainWindow):
         super(UI, self).__init__()
         self.mutex = QMutex()
         self.condition = QWaitCondition()
+        self.ThreadExist = False
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.selected_camera_index = 0
@@ -99,26 +101,28 @@ class UI(Qtw.QMainWindow):
         self.ui.actionLoad_target_images.triggered.connect(self.Load_Dataset)
         self.ui.CurrentImage_slider.valueChanged.connect(self.Value_changed_ImageSlider)
         self.ui.CurrentImage_radiobox.valueChanged.connect(self.Value_changed_ImageRadiobox)
-        self.ui.TurnCameraButton.clicked.connect(self.Camera_button_pressed)
+        self.ui.CameraOnBtn.clicked.connect(self.CameraON)
+        self.ui.CameraOffBtn.clicked.connect(self.CamerOFF)
         self.ui.SetExportPathButton.clicked.connect(self.Set_export_path)
         self.ui.CreateReportButton.clicked.connect(self.Create_report)
 
 
     def InitCamera(self):
         self.mutex.lock()
-        self.thr = CamThread(mutex=self.mutex,condition=self.condition)
+        self.thr = CamThread(mutex=self.mutex, condition=self.condition, camera_idx=self.selected_camera_index)
         self.thr.changemap.connect(self.ImageUpdateSlot)
         self.thr.start()
+        self.ThreadExist = True
 
     def StopCamera(self):
-        if self.thr:
-            self.thr.stop()
-            self.thr.wait()  # Wait for the thread to finish before continuing
-        self.mutex.unlock()
+        CamThread.stop(self.thr)
+        self.ThreadExist = False
+
 
     def select_camera(self, camera):
         selected_index = QCameraInfo.availableCameras().index(camera)
         self.selected_camera_index = selected_index
+
 
     @pyqtSlot('QImage')
     def ImageUpdateSlot(self, Image):
@@ -185,6 +189,25 @@ class UI(Qtw.QMainWindow):
     def Create_report(self):
         return
 
+    @pyqtSlot()
+    def CameraON(self):
+        try:
+            if self.Available_cameras != 0:
+                Msg = "Camera turned on"
+                Logger_module.Add_Trace_To_Logfile(message=Msg, log_mode='INFO')
+                self.InitCamera()
+        except Exception as ErrorMsg:
+            Logger_module.Add_Trace_To_Logfile(message=ErrorMsg, log_mode=ErrorMsg)
+            return
+
+    @pyqtSlot()
+    def CamerOFF(self):
+        if self.Available_cameras != 0:
+            Msg = "Camera turned off"
+            Logger_module.Add_Trace_To_Logfile(message=Msg, log_mode='INFO')
+            self.StopCamera()
+            del self.thr
+            gc.collect()
     @pyqtSlot()
     def Camera_button_pressed(self):
         try:
