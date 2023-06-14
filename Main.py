@@ -40,6 +40,12 @@ import time
 
 # ==================================================================================================================== #
 
+def load_file_content(Filename):
+    file_contents = ''
+    with open(Filename, 'r') as file:
+        file_contents = file.read()
+    return file_contents
+
 
 class CamThread(QThread):
     changemap = pyqtSignal('QImage')
@@ -87,6 +93,8 @@ class UI(Qtw.QMainWindow):
         self.selected_camera_index = 0
         self.ImagesList = None
         self.SoftwareVersion = '1.0.0'
+        self.Policy_content = load_file_content('Policy.txt')
+        self.SoftwareINFO_content =load_file_content('Software info.txt')
         self.ui.actionversion_number.setText(self.SoftwareVersion)
         self.Available_cameras = QCameraInfo.availableCameras()
         if not self.Available_cameras:
@@ -102,12 +110,14 @@ class UI(Qtw.QMainWindow):
         self.output_directory_path = None
         self.ui.actionLoad_target_images.triggered.connect(self.Load_Dataset)
         self.ui.actionPolicy_2.triggered.connect(self.Present_policy)
+        self.ui.actionSofware_info.triggered.connect(self.Present_Sofware_info)
         self.ui.CurrentImage_slider.valueChanged.connect(self.Value_changed_ImageSlider)
         self.ui.CurrentImage_radiobox.valueChanged.connect(self.Value_changed_ImageRadiobox)
         self.ui.CameraOnBtn.clicked.connect(self.CameraON)
         self.ui.CameraOffBtn.clicked.connect(self.CameraOFF)
         self.ui.SetExportPathButton.clicked.connect(self.Set_export_path)
         self.ui.CreateReportButton.clicked.connect(self.Create_report)
+
 
     def CameraON(self): #why the hell it crashing in second time ?!!
         self.mutex.lock()
@@ -170,18 +180,20 @@ class UI(Qtw.QMainWindow):
             Logger_module.Add_Trace_To_Logfile(message=ErrorMsg, log_mode='ERROR')
             return
 
-    def Present_policy(self):
-        Policy_file = 'Policy.txt'
-        file_contents = ''
-        with open(Policy_file, 'r') as file:
-            file_contents = file.read()
+    def Popup_a_message(self, popup_title, popup_content):
         popup = QMessageBox()
-        popup.setWindowTitle("Policy")
-        text = file_contents
-        popup.setText(text)
+        popup.setWindowTitle(popup_title)
+        popup.setText(popup_content)
         popup.exec_()
 
-        return
+    def Present_policy(self):
+        self.Popup_a_message(popup_title='Policy', popup_content=self.Policy_content)
+
+
+    def Present_Sofware_info(self):
+        self.Popup_a_message(popup_title='Software info', popup_content=self.SoftwareINFO_content)
+
+
     def Set_export_path(self):
         try:
             self.output_directory_path = QFileDialog.getExistingDirectory(self,

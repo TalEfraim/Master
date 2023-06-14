@@ -1,0 +1,59 @@
+Privacy Policy for "Target finder" 
+
+Effective Date: June 14, 2023
+
+"Target finder"  is a free open-source program developed for research and knowledge purposes.
+ This privacy policy outlines how "Target finder" collects, uses, stores, and protects data related to the learning of a person dataset and the identification of individuals in a camera.
+
+1. Data Collection:
+   "Target finder" may collect and store the following data:
+
+   Person Dataset: "Target finder" may collect and store a dataset of images or related data representing individuals for the purpose of learning and training the program's algorithms.
+   Camera Feed: "Target finder" may access and analyze camera feeds or video streams to identify individuals based on the learned dataset.
+   System Logs: "Target finder" may collect system logs and error reports for troubleshooting and improvement purposes.
+
+2. Data Usage:
+
+   "Target finder" uses the person dataset to train its algorithms to recognize and identify individuals in camera feeds.
+   Camera feeds or video streams are processed in real-time to identify individuals based on the learned dataset.
+   "Target finder" does not use the collected data for any purposes other than the intended functionality of the program.
+
+3. Data Storage and Security:
+
+   "Target finder" takes reasonable measures to protect the collected data from unauthorized access, disclosure, or alteration.
+   The person dataset and any associated data are stored securely and are only accessible to authorized individuals involved in the development and maintenance of "Target finder".
+   "Target finder" does not share the collected data with third parties.
+
+4. User Responsibilities:
+
+   Users of "Target finder" are responsible for complying with all applicable laws and regulations regarding privacy and data protection.
+   Users should ensure that they have the necessary rights and permissions to use and process any personal data in accordance with the applicable laws.
+
+5. Legal Disclaimer:
+
+   "Target finder" is provided "as is" without warranty of any kind, including but not limited to the accuracy, reliability, or suitability for any particular purpose.
+   Users understand and acknowledge that the identification and recognition algorithms employed by "Target finder" may have limitations, and false positives or negatives may occur.
+
+6. Updates to the Privacy Policy:
+
+   "Target finder" reserves the right to update or modify this privacy policy at any time.
+   Users will be notified of any significant changes to the privacy policy through [appropriate means, such as email or program notifications].
+
+7. Responsible Use:
+
+   "Target finder" is intended to be used for lawful and ethical purposes only.
+   Users of "Target finder" must not use the program for any illegal, unethical, or unauthorized activities,
+   including but not limited to spying on individuals without their consent, violating their privacy rights, or engaging in any form of harassment or discrimination.
+   Users are solely responsible for ensuring that their use of "Target finder" complies with all applicable laws, regulations, and ethical standards.
+
+8. Legal Compliance:
+
+   Users of "Target finder" are expected to comply with all relevant laws and regulations governing their use of the program.
+   Users should familiarize themselves with the privacy, data protection, and surveillance laws in their jurisdiction to ensure their activities with "Target finder" are in compliance
+
+9. Disclaimer of Misuse:
+
+   "Target finder" explicitly disclaims any responsibility or liability for any misuse or unlawful use of the program by its users.
+   "Target finder" cannot control or monitor the actions of individual users and cannot be held responsible for any unauthorized or inappropriate use of the program.
+
+By using "Target finder", users acknowledge that they have read and understood this privacy policy and agree to its terms.

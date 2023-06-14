@@ -1,0 +1,13 @@
+Hello.
+This software is allowing to train a model with person's images set, and finding him with a web camera / security camera. 
+
+It's important to clarify that using this program for harmful causes is forbidden. use it only for research and knowledge causes.
+
+For properly function of the software, please make sure that you have an available camera which synchronized with your device and a data set. 
+
+Note: The algorithm recognition confidence will be higher with a larger data set. 
+
+For any questions, job suggestions, ect.. please contact: Tal_Efraim@gmail.com
+
+Enjoy !
+
