@@ -25,7 +25,6 @@ import time
 
 # TODO: 1. Write a function that will get a path for images dataset folder and upload the album to dataset label
 # TODO: 2. Write a function that synchronizing between dataset scroll bar to radio box.
-# TODO: 3. Write general function to handle "about", "policy", etc.. events.
 # TODO: 4. Turn black the  live camera screen when camera state is OFF.
 # TODO: 5. Handle software crash in case of camera ON + path choose, any other event.
 # TODO: 7. Write a short user manual.
