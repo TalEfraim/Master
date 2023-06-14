@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>898</width>
-    <height>660</height>
+    <width>997</width>
+    <height>672</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,9 +36,9 @@
    <widget class="QLabel" name="TargetImagesLabel">
     <property name="geometry">
      <rect>
-      <x>560</x>
+      <x>670</x>
       <y>15</y>
-      <width>201</width>
+      <width>231</width>
       <height>31</height>
      </rect>
     </property>
@@ -57,10 +57,10 @@
    <widget class="QSlider" name="CurrentImage_slider">
     <property name="geometry">
      <rect>
-      <x>540</x>
-      <y>280</y>
-      <width>191</width>
-      <height>20</height>
+      <x>630</x>
+      <y>340</y>
+      <width>241</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="orientation">
@@ -70,8 +70,8 @@
    <widget class="QSpinBox" name="CurrentImage_radiobox">
     <property name="geometry">
      <rect>
-      <x>740</x>
-      <y>280</y>
+      <x>880</x>
+      <y>340</y>
       <width>42</width>
       <height>22</height>
      </rect>
@@ -80,7 +80,7 @@
    <widget class="QPushButton" name="CreateReportButton">
     <property name="geometry">
      <rect>
-      <x>580</x>
+      <x>680</x>
       <y>550</y>
       <width>221</width>
       <height>41</height>
@@ -105,7 +105,7 @@
      <rect>
       <x>160</x>
       <y>510</y>
-      <width>641</width>
+      <width>741</width>
       <height>31</height>
      </rect>
     </property>
@@ -153,10 +153,10 @@
    <widget class="QLabel" name="DatasetImages">
     <property name="geometry">
      <rect>
-      <x>540</x>
+      <x>630</x>
       <y>50</y>
-      <width>241</width>
-      <height>221</height>
+      <width>291</width>
+      <height>281</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -176,7 +176,7 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(255 ,0 ,0)</string>
+     <string notr="true">background-color: rgb(140 ,0 ,0)</string>
     </property>
     <property name="text">
      <string>Camera OFF</string>
@@ -188,7 +188,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>898</width>
+     <width>997</width>
      <height>21</height>
     </rect>
    </property>

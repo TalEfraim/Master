@@ -1,33 +1,21 @@
-import gc
 import os
-import sys
 import cv2
-from PyQt5 import QtWidgets as Qtw
-from natsort import natsorted, ns, index_natsorted, order_by_index
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtGui import *
-from PyQt5.QtMultimedia import *
-from PyQt5.QtWidgets import QLabel, QFileDialog, QAction
+import sys
 import Logger_module
-from FrontEnd_module import Ui_MainWindow
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QMessageBox
+from PyQt5.QtMultimedia import *
+from PyQt5 import QtWidgets as Qtw
 from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtWidgets import QMessageBox
+from FrontEnd_module import Ui_MainWindow
+from PyQt5.QtWidgets import QFileDialog, QAction
 from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot, Qt, QMutex, QWaitCondition
-import cv2
-import sys
-import time
-
 
 # ==================================================================================================================== #
 # TODO: Software front-end / back-end tasks:
 
-# TODO: 1. Write a function that will get a path for images dataset folder and upload the album to dataset label
-# TODO: 2. Write a function that synchronizing between dataset scroll bar to radio box.
-# TODO: 4. Turn black the  live camera screen when camera state is OFF.
-# TODO: 5. Handle software crash in case of camera ON + path choose, any other event.
-# TODO: 7. Write a short user manual.
+# TODO: 1. Handle camera thread in re-flow
+# TODO: 2. Turn black the  live camera screen when camera state is OFF.
+# TODO: 3. Handle software crash in case of camera ON + path choose, any other event.
 
 # ==================================================================================================================== #
 # TODO: Algo tasks:
@@ -116,6 +104,8 @@ class UI(Qtw.QMainWindow):
         self.ui.CameraOffBtn.clicked.connect(self.CameraOFF)
         self.ui.SetExportPathButton.clicked.connect(self.Set_export_path)
         self.ui.CreateReportButton.clicked.connect(self.Create_report)
+        self.ui.MainVideo.setPixmap(QPixmap('camera off icon.png'))
+        self.Data_set = []
 
 
     def CameraON(self): #why the hell it crashing in second time ?!!
@@ -130,6 +120,9 @@ class UI(Qtw.QMainWindow):
             self.thr.stop()
             self.ThreadExist = False
             del self.thr
+            pixmap = QPixmap('camera off icon.png')
+            self.ui.MainVideo.setPixmap(pixmap)
+
 
     def select_camera(self, camera):
         selected_index = QCameraInfo.availableCameras().index(camera)
@@ -152,10 +145,23 @@ class UI(Qtw.QMainWindow):
         Input_folder = QFileDialog.getExistingDirectory(self, "Please choose images location directory.")
         self.ImagesList = [f for f in os.listdir(Input_folder) if f.endswith('.jpg')]
         for image in self.ImagesList:
-            pixmap = QPixmap(Input_folder + image)
-            self.ui.DatasetImages.setPixmap(pixmap)
-            self.ui.DatasetImages.setScaledContents(True)
-        # TODO: update images on label.
+            pixmap = QPixmap(os.path.join(Input_folder, image))
+            self.Data_set.append(pixmap)
+
+    def Refresh_view(self, image_idx):
+        if len(self.Data_set) == 0:
+            return
+        else:
+            pixmap = self.Data_set[image_idx]
+            label_width = self.ui.DatasetImages.width()
+            label_height = self.ui.DatasetImages.height()
+
+            scaled_pixmap = pixmap.scaled(label_width, label_height, Qt.IgnoreAspectRatio)
+            self.ui.DatasetImages.setPixmap(scaled_pixmap)
+            self.ui.DatasetImages.update()
+            self.ui.CurrentImage_slider.setMaximum(len(self.Data_set) - 1)
+            self.ui.CurrentImage_radiobox.setMaximum(len(self.Data_set) - 1)
+
 
     def Value_changed_ImageSlider(self):
         try:
@@ -163,6 +169,7 @@ class UI(Qtw.QMainWindow):
             plot_slider = self.ui.CurrentImage_slider.value()
             if plot_box != plot_slider:
                 self.ui.CurrentImage_radiobox.setValue(plot_slider)
+                self.Refresh_view(image_idx=plot_slider)
         except Exception as ErrorMsg:
             Logger_module.Add_Trace_To_Logfile(message=ErrorMsg, log_mode='ERROR')
             return
@@ -173,8 +180,7 @@ class UI(Qtw.QMainWindow):
             plot_slider = self.ui.CurrentImage_slider.value()
             if plot_box != plot_slider:
                 self.ui.CurrentImage_slider.setValue(plot_box)
-                # self.RefreshPage()
-                # self.UpdateBox()
+                self.Refresh_view(image_idx=plot_box)
         except Exception as ErrorMsg:
             Logger_module.Add_Trace_To_Logfile(message=ErrorMsg, log_mode='ERROR')
             return
@@ -188,10 +194,8 @@ class UI(Qtw.QMainWindow):
     def Present_policy(self):
         self.Popup_a_message(popup_title='Policy', popup_content=self.Policy_content)
 
-
     def Present_Sofware_info(self):
         self.Popup_a_message(popup_title='Software info', popup_content=self.SoftwareINFO_content)
-
 
     def Set_export_path(self):
         try:
