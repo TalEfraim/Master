@@ -5,7 +5,7 @@ import Logger_module
 from PyQt5.QtMultimedia import *
 from PyQt5 import QtWidgets as Qtw
 from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox, QProgressBar
 from FrontEnd_module import Ui_MainWindow
 from PyQt5.QtWidgets import QFileDialog, QAction
 from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot, Qt, QMutex, QWaitCondition
@@ -26,6 +26,7 @@ from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot, Qt, QMutex, QWaitConditi
 # TODO: 4. Write an algorithm that will detect the target among others.
 
 # ==================================================================================================================== #
+
 
 def load_file_content(Filename):
     file_contents = ''
@@ -106,7 +107,24 @@ class UI(Qtw.QMainWindow):
         self.ui.CreateReportButton.clicked.connect(self.Create_report)
         self.ui.MainVideo.setPixmap(QPixmap('camera off icon.png'))
         self.Data_set = []
+        self.progress_bar = QProgressBar(self)
+        self.progress_bar.setGeometry(510, 140, 30, 211)
+        self.progress_bar.setOrientation(Qt.Vertical)
+        self.progress_bar.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
+        style_sheet = """
+               QProgressBar {
+                   border: 1px solid black;
+                   border-radius: 7px;
+                   background-color: gray;
+               }
 
+               QProgressBar::chunk {
+                   background-color: #00FF00;  /* Green color */
+                   height: 10px;
+               }
+           """
+        self.progress_bar.setStyleSheet(style_sheet)
+        self.progress_bar.setValue(13)
 
     def CameraON(self): #why the hell it crashing in second time ?!!
         self.mutex.lock()
@@ -138,8 +156,8 @@ class UI(Qtw.QMainWindow):
             self.mutex.unlock()
             self.condition.wakeAll()
 
-        # except Exception as ErrorMsg:
-        #     Logger_module.Add_Trace_To_Logfile(message=ErrorMsg, log_mode='ERROR')
+    def update_ProgressBar(self, value):
+        self.progress_bar.setValue(value)
 
     def Load_Dataset(self):
         Input_folder = QFileDialog.getExistingDirectory(self, "Please choose images location directory.")
@@ -155,13 +173,11 @@ class UI(Qtw.QMainWindow):
             pixmap = self.Data_set[image_idx]
             label_width = self.ui.DatasetImages.width()
             label_height = self.ui.DatasetImages.height()
-
             scaled_pixmap = pixmap.scaled(label_width, label_height, Qt.IgnoreAspectRatio)
             self.ui.DatasetImages.setPixmap(scaled_pixmap)
             self.ui.DatasetImages.update()
             self.ui.CurrentImage_slider.setMaximum(len(self.Data_set) - 1)
             self.ui.CurrentImage_radiobox.setMaximum(len(self.Data_set) - 1)
-
 
     def Value_changed_ImageSlider(self):
         try:
