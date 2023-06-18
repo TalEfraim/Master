@@ -1,4 +1,6 @@
 import os
+import time
+
 import cv2
 import sys
 import Logger_module
@@ -16,6 +18,8 @@ from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot, Qt, QMutex, QWaitConditi
 # TODO: 1. Handle camera thread in re-flow
 # TODO: 2. Turn black the  live camera screen when camera state is OFF.
 # TODO: 3. Handle software crash in case of camera ON + path choose, any other event.
+# TODO: 4. Control the confidence level bar colors [red for low, yellow for medium, green for high].
+# TODO:    Red range: 0% - 69%, yellow range: 70% - 92%, green range; 93% - 100%
 
 # ==================================================================================================================== #
 # TODO: Algo tasks:
@@ -111,7 +115,32 @@ class UI(Qtw.QMainWindow):
         self.progress_bar.setGeometry(510, 140, 30, 211)
         self.progress_bar.setOrientation(Qt.Vertical)
         self.progress_bar.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
-        style_sheet = """
+        style_sheet = [None, None, None]
+        style_sheet[0] = """
+               QProgressBar {
+                   border: 1px solid black;
+                   border-radius: 7px;
+                   background-color: gray;
+               }
+
+               QProgressBar::chunk {
+                   background-color: #FF0000;  /* Red color */
+                   height: 10px;
+               }
+           """
+        style_sheet[1] = """
+               QProgressBar {
+                   border: 1px solid black;
+                   border-radius: 7px;
+                   background-color: gray;
+               }
+
+               QProgressBar::chunk {
+                   background-color: #FFFF00;  /* Yellow color */
+                   height: 10px;
+               }
+           """
+        style_sheet[2] = """
                QProgressBar {
                    border: 1px solid black;
                    border-radius: 7px;
@@ -123,8 +152,10 @@ class UI(Qtw.QMainWindow):
                    height: 10px;
                }
            """
-        self.progress_bar.setStyleSheet(style_sheet)
-        self.progress_bar.setValue(13)
+
+        self.progress_bar.setStyleSheet(style_sheet[2])
+        self.progress_bar.setValue(100)
+
 
     def CameraON(self): #why the hell it crashing in second time ?!!
         self.mutex.lock()
