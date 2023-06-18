@@ -1,6 +1,4 @@
 import os
-import time
-
 import cv2
 import sys
 import Logger_module
@@ -15,11 +13,7 @@ from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot, Qt, QMutex, QWaitConditi
 # ==================================================================================================================== #
 # TODO: Software front-end / back-end tasks:
 
-# TODO: 1. Handle camera thread in re-flow
-# TODO: 2. Turn black the  live camera screen when camera state is OFF.
-# TODO: 3. Handle software crash in case of camera ON + path choose, any other event.
-# TODO: 4. Control the confidence level bar colors [red for low, yellow for medium, green for high].
-# TODO:    Red range: 0% - 69%, yellow range: 70% - 92%, green range; 93% - 100%
+#TODO: 1. Write a user manual.
 
 # ==================================================================================================================== #
 # TODO: Algo tasks:
@@ -28,6 +22,8 @@ from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot, Qt, QMutex, QWaitConditi
 # TODO: 2. Reach high confidence level
 # TODO: 3. Write an algorithm that will detect the target alone.
 # TODO: 4. Write an algorithm that will detect the target among others.
+# TODO: 4. Control the confidence level bar colors [red for low, yellow for medium, green for high].
+# TODO:    Red range: 0% - 69%, yellow range: 70% - 92%, green range; 93% - 100%
 
 # ==================================================================================================================== #
 
@@ -37,7 +33,6 @@ def load_file_content(Filename):
     with open(Filename, 'r') as file:
         file_contents = file.read()
     return file_contents
-
 
 class CamThread(QThread):
     changemap = pyqtSignal('QImage')
