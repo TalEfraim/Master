@@ -152,12 +152,10 @@ class UI(Qtw.QMainWindow):
                    height: 10px;
                }
            """
-
         self.progress_bar.setStyleSheet(style_sheet[2])
         self.progress_bar.setValue(100)
 
-
-    def CameraON(self): #why the hell it crashing in second time ?!!
+    def CameraON(self):
         self.mutex.lock()
         self.thr = CamThread(mutex=self.mutex, condition=self.condition, camera_idx=self.selected_camera_index)
         self.thr.changemap.connect(self.ImageUpdateSlot)
@@ -166,12 +164,11 @@ class UI(Qtw.QMainWindow):
 
     def CameraOFF(self):
         if self.ThreadExist:
-            self.thr.stop()
+            self.thr.terminate()
             self.ThreadExist = False
-            del self.thr
             pixmap = QPixmap('camera off icon.png')
             self.ui.MainVideo.setPixmap(pixmap)
-
+            self.mutex.unlock()
 
     def select_camera(self, camera):
         selected_index = QCameraInfo.availableCameras().index(camera)
