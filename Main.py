@@ -13,11 +13,12 @@ from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot, Qt, QMutex, QWaitConditi
 # ==================================================================================================================== #
 # TODO: Software front-end / back-end tasks:
 
-#TODO: 1. Write a user manual.
+#TODO: 1. Write a user manual !!!!!!!!!!!!!!!
 
 # ==================================================================================================================== #
 # TODO: Algo tasks:
 
+# TODO: 1. Download a trained face recognition model to work with.
 # TODO: 1. Train a model with data set of target / suspect images set
 # TODO: 2. Reach high confidence level
 # TODO: 3. Write an algorithm that will detect the target alone.
@@ -81,7 +82,7 @@ class UI(Qtw.QMainWindow):
         self.ImagesList = None
         self.SoftwareVersion = '1.0.0'
         self.Policy_content = load_file_content('Policy.txt')
-        self.SoftwareINFO_content =load_file_content('Software info.txt')
+        self.SoftwareINFO_content = load_file_content('Software info.txt')
         self.ui.actionversion_number.setText(self.SoftwareVersion)
         self.Available_cameras = QCameraInfo.availableCameras()
         if not self.Available_cameras:
@@ -104,14 +105,15 @@ class UI(Qtw.QMainWindow):
         self.ui.CameraOffBtn.clicked.connect(self.CameraOFF)
         self.ui.SetExportPathButton.clicked.connect(self.Set_export_path)
         self.ui.CreateReportButton.clicked.connect(self.Create_report)
+        self.ui.actionUser_manual.triggered.connect(self.User_manual)
         self.ui.MainVideo.setPixmap(QPixmap('camera off icon.png'))
         self.Data_set = []
         self.progress_bar = QProgressBar(self)
         self.progress_bar.setGeometry(510, 140, 30, 211)
         self.progress_bar.setOrientation(Qt.Vertical)
         self.progress_bar.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
-        style_sheet = [None, None, None]
-        style_sheet[0] = """
+        self.confidecne_bar_colors = [None, None, None]
+        self.confidecne_bar_colors[0] = """
                QProgressBar {
                    border: 1px solid black;
                    border-radius: 7px;
@@ -123,7 +125,7 @@ class UI(Qtw.QMainWindow):
                    height: 10px;
                }
            """
-        style_sheet[1] = """
+        self.confidecne_bar_colors[1] = """
                QProgressBar {
                    border: 1px solid black;
                    border-radius: 7px;
@@ -135,7 +137,7 @@ class UI(Qtw.QMainWindow):
                    height: 10px;
                }
            """
-        style_sheet[2] = """
+        self.confidecne_bar_colors[2] = """
                QProgressBar {
                    border: 1px solid black;
                    border-radius: 7px;
@@ -147,8 +149,8 @@ class UI(Qtw.QMainWindow):
                    height: 10px;
                }
            """
-        self.progress_bar.setStyleSheet(style_sheet[2])
-        self.progress_bar.setValue(100)
+        self.progress_bar.setStyleSheet(self.confidecne_bar_colors[0])
+        self.progress_bar.setValue(0)
 
     def CameraON(self):
         self.mutex.lock()
@@ -173,8 +175,7 @@ class UI(Qtw.QMainWindow):
     def ImageUpdateSlot(self, Image):
         self.mutex.lock()
         try:
-            self.ui.MainVideo.setPixmap(
-                QPixmap.fromImage(Image))  # I think this line causing the crash after video stop.
+            self.ui.MainVideo.setPixmap(QPixmap.fromImage(Image))
         finally:
             self.mutex.unlock()
             self.condition.wakeAll()
@@ -188,6 +189,8 @@ class UI(Qtw.QMainWindow):
         for image in self.ImagesList:
             pixmap = QPixmap(os.path.join(Input_folder, image))
             self.Data_set.append(pixmap)
+        self.Refresh_view(image_idx=1)
+        self.Refresh_view(image_idx=0)
 
     def Refresh_view(self, image_idx):
         if len(self.Data_set) == 0:
@@ -232,6 +235,10 @@ class UI(Qtw.QMainWindow):
 
     def Present_policy(self):
         self.Popup_a_message(popup_title='Policy', popup_content=self.Policy_content)
+
+    def User_manual(self):
+        os.startfile('Policy.txt')
+        return
 
     def Present_Sofware_info(self):
         self.Popup_a_message(popup_title='Software info', popup_content=self.SoftwareINFO_content)
