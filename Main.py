@@ -4,11 +4,13 @@ import sys
 import Logger_module
 from PyQt5.QtMultimedia import *
 from PyQt5 import QtWidgets as Qtw
+import face_recognition as FR
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import QMessageBox, QProgressBar
 from FrontEnd_module import Ui_MainWindow
 from PyQt5.QtWidgets import QFileDialog, QAction
 from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot, Qt, QMutex, QWaitCondition
+import traceback
 
 # ==================================================================================================================== #
 # TODO: Software front-end / back-end tasks:
@@ -44,26 +46,56 @@ class CamThread(QThread):
         self.condition = condition
         self.running = True
         self.CamIDX = camera_idx
+        self.face_cascade = cv2.CascadeClassifier('Face_detect_filter.xml')
+
+
 
     def run(self):
         cap = cv2.VideoCapture(self.CamIDX)
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+
         while self.running:
             try:
                 ret, img_rgb = cap.read()
                 if ret:
+                    gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
+
+                    # Detect faces
+                    faces = self.face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5, minSize=(30, 30))
+
+                    # Draw rectangles around the detected faces
+                    for (x, y, w, h) in faces:
+                        cv2.rectangle(img_rgb, (x, y), (x+w, y+h), (255, 0, 0), 2)
+
                     rgb = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2RGB)
-
-                    # any other image processing here
-
                     convert = QImage(rgb.data, rgb.shape[1], rgb.shape[0], QImage.Format_RGB888)
-                    p = convert.scaled(640, 480, Qt.KeepAspectRatio)
-                    self.changemap.emit(p)
+                    self.changemap.emit(convert)
                     self.condition.wait(self.mutex)
 
             except Exception as ErrorMsg:
                 Logger_module.Add_Trace_To_Logfile(message=ErrorMsg, log_mode='ERROR')
+
+    # def run(self):
+    #     cap = cv2.VideoCapture(self.CamIDX)
+    #     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+    #     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+    #     while self.running:
+    #         try:
+    #             ret, img_rgb = cap.read()
+    #             if ret:
+    #                 rgb = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2RGB)
+    #
+    #                 # any other image processing here
+    #                 # enc = FR.face_encodings(rgb)[0]
+    #
+    #                 convert = QImage(rgb.data, rgb.shape[1], rgb.shape[0], QImage.Format_RGB888)
+    #                 p = convert.scaled(640, 480, Qt.KeepAspectRatio)
+    #                 self.changemap.emit(p)
+    #                 self.condition.wait(self.mutex)
+    #
+    #         except Exception as ErrorMsg:
+    #             Logger_module.Add_Trace_To_Logfile(message=ErrorMsg, log_mode='ERROR')
 
     def stop(self):
         self.running = False
@@ -154,7 +186,8 @@ class UI(Qtw.QMainWindow):
 
     def CameraON(self):
         self.mutex.lock()
-        self.thr = CamThread(mutex=self.mutex, condition=self.condition, camera_idx=self.selected_camera_index)
+        self.thr = CamThread(mutex=self.mutex, condition=self.condition,
+                             camera_idx=self.selected_camera_index)
         self.thr.changemap.connect(self.ImageUpdateSlot)
         self.thr.start()
         self.ThreadExist = True
@@ -166,6 +199,9 @@ class UI(Qtw.QMainWindow):
             pixmap = QPixmap('camera off icon.png')
             self.ui.MainVideo.setPixmap(pixmap)
             self.mutex.unlock()
+
+    def Face_detect(self):
+        return
 
     def select_camera(self, camera):
         selected_index = QCameraInfo.availableCameras().index(camera)
