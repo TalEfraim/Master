@@ -47,6 +47,7 @@ class CamThread(QThread):
         self.running = True
         self.CamIDX = camera_idx
         self.face_cascade = cv2.CascadeClassifier('Face_detect_filter.xml')
+        # self.face_cascade = cv2.CascadeClassifier('b.xml')
 
 
 
