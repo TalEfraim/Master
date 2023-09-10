@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import QFileDialog, QAction
 from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot, Qt, QMutex, QWaitCondition
 import traceback
 
+
 # ==================================================================================================================== #
 # TODO: Software front-end / back-end tasks:
 
@@ -52,6 +53,7 @@ class CamThread(QThread):
 
 
     def run(self):
+        print("Cam function restarted")
         cap = cv2.VideoCapture(self.CamIDX)
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
@@ -64,6 +66,7 @@ class CamThread(QThread):
 
                     # Detect faces
                     faces = self.face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5, minSize=(30, 30))
+                    
 
                     # Draw rectangles around the detected faces
                     for (x, y, w, h) in faces:
@@ -182,7 +185,10 @@ class UI(Qtw.QMainWindow):
                    height: 10px;
                }
            """
-        self.progress_bar.setStyleSheet(self.confidecne_bar_colors[0])
+        self.RedProgBar = self.confidecne_bar_colors[0]
+        self.YellowProgBar = self.confidecne_bar_colors[1]
+        self.GreenProgBar = self.confidecne_bar_colors[2]
+        self.progress_bar.setStyleSheet(self.RedProgBar)
         self.progress_bar.setValue(0)
 
     def CameraON(self):
@@ -223,6 +229,11 @@ class UI(Qtw.QMainWindow):
     def Load_Dataset(self):
         Input_folder = QFileDialog.getExistingDirectory(self, "Please choose images location directory.")
         self.ImagesList = [f for f in os.listdir(Input_folder) if f.endswith('.jpg')]
+        self.OrgDatasetImgs = self.ImagesList
+        OrgDatasetList = []
+        for DatasetImg in self.OrgDatasetImgs:
+            OrgDatasetList.append(os.path.join(Input_folder, DatasetImg))
+        self.OrgDatasetImgs = OrgDatasetList
         for image in self.ImagesList:
             pixmap = QPixmap(os.path.join(Input_folder, image))
             self.Data_set.append(pixmap)
